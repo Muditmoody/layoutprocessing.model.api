@@ -40,6 +40,14 @@ jobs:
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
           images: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_LAYOUT_MODEL_API }}
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
     - name: Checking secrets
       run: |
         echo ${{secrets.DOCKERHUB_LAYOUT_MODEL_API}} | sed 's/./& /g'
