@@ -1,0 +1,12 @@
+fastapi==0.95.2
+joblib==1.2.0
+mysql_connector_repackaged==0.3.1
+numpy==1.21.4
+pandas==1.4.3
+pydantic==1.10.2
+pyodbc==4.0.35
+pypika==0.48.9
+Requests==2.31.0
+scikit_learn==1.0.2
+uvicorn==0.22.0
+xgboost==1.7.4
