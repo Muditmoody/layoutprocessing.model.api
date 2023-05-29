@@ -52,8 +52,6 @@ jobs:
       run: |
         echo ${{secrets.DOCKERHUB_LAYOUT_MODEL_API}} | sed 's/./& /g'
         echo ${{secrets.DOCKER_USERNAME}} | sed 's/./& /g'
-        tag_v=$(git describe --tags $(git rev-list --tags --max-count=1))
-        tag=$(echo $tag_v | sed 's/v//')
     - name: Build and push Docker image for modelling app
       uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
       with:
