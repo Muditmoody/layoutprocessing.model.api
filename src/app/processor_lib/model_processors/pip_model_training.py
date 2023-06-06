@@ -9,11 +9,26 @@ SEED = 53
 
 
 class Training:
+    """
+    Class for training models.
+    """
     def __init__(self):
+        """
+        Initialize the Training object.
+        """
         pass
 
     @staticmethod
     def process_training(save_result=True):
+        """
+        Process the training of models.
+
+        Args:
+            save_result (bool): Flag indicating whether to save the trained models.
+
+        Returns:
+            None
+        """
         use_api = False
         filePath = "../data/processed/"
         save_path = "../../data/"

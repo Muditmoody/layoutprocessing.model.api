@@ -20,11 +20,35 @@ columnMap = {
 
 
 class SequenceProcessor:
+    """
+    Class for sequence processing tasks.
+
+    Methods:
+        - __init__(): Initializes the SequenceProcessor.
+        - get_similarity_byRef(notif_ref): Retrieves sequence similarity based on the notification reference.
+        - get_similarity(): Retrieves sequence similarity for all notifications.
+        - save_results(results, runDate): Saves the sequence similarity results.
+    """
     def __init__(self):
+        """
+        Initializes the SequenceProcessor.
+
+        Returns:
+            SequenceProcessor: The SequenceProcessor instance.
+        """
         return self
 
     @staticmethod
     def get_similarity_byRef(notif_ref):
+        """
+        Retrieves sequence similarity based on the notification reference.
+
+        Args:
+            notif_ref (int): The notification reference.
+
+        Returns:
+            DataFrame: The sequence similarity DataFrame sorted by score and layout reference.
+        """
         processor = scp.SequenceComparerProcessor()
         df_data, df_result = processor.evaluate(notif_ref)
 
@@ -32,6 +56,12 @@ class SequenceProcessor:
 
     @staticmethod
     def get_similarity():
+        """
+        Retrieves sequence similarity for all notifications.
+
+        Returns:
+            DataFrame: The sequence similarity DataFrame.
+        """
         batch_size = 100
 
         data_processor = data_proc.DataExtractProcessor()
@@ -60,5 +90,15 @@ class SequenceProcessor:
 
     @staticmethod
     def save_results(results, runDate):
+        """
+        Saves the sequence similarity results.
+
+        Args:
+            results (list): The sequence similarity results as a list of dictionaries.
+            runDate: The run date.
+
+        Returns:
+            None
+        """
         seq_processor = scp.SequenceComparerProcessor()
         seq_processor.save_results(results, runDate)

@@ -14,6 +14,14 @@ from app.processor_lib.file_processors import coding_code_processor as cdc_proc,
 
 
 class DataLoader:
+    """
+    Class for loading data into the database.
+
+    Methods:
+        __init__(db_handler, db_type, base_path, failed_dir, processed_dir): Initializes the DataLoader instance.
+        connectToDb(): Connects to the database based on the database type.
+        process_datafile(conn): Processes data files and imports the data into the database.
+    """
     __db_handler__ = None
     __base_path__ = None
     __processed_dir__ = None
@@ -22,6 +30,16 @@ class DataLoader:
 
     def __init__(self, db_handler: db.db_handler, db_type: EnumDatabase, base_path: str, failed_dir: str,
                  processed_dir: str):
+        """
+        Initializes the DataLoader instance.
+
+        Parameters:
+            db_handler (db.db_handler): Database handler instance.
+            db_type (EnumDatabase): Database type.
+            base_path (str): Base path for file operations.
+            failed_dir (str): Directory for failed files.
+            processed_dir (str): Directory for processed files.
+        """
         self.__dbType__ = EnumDatabase.SQL_SERVER if db_type is None else db_type
         self.__db_handler__ = db.db_handler(self.__dbType__) if db_handler is None else db_handler
         self.__base_path__ = ".." if (base_path is None or base_path == "") else base_path
@@ -29,6 +47,13 @@ class DataLoader:
         self.__failed_dir__ = "..\\failed" if (failed_dir is None or failed_dir == "") else failed_dir
 
     def connectToDb(self):
+        """
+        Connects to the database based on the database type.
+
+        Returns:
+            conn (Union[CMySQLConnection, MySQLConnection, odbc.Connection]): Database connection.
+        """
+        
         conn = None
         match self.__dbType__:
             case EnumDatabase.SQL_SERVER:
@@ -41,6 +66,12 @@ class DataLoader:
         return conn
 
     def process_datafile(self ,conn: Union[CMySQLConnection | MySQLConnection | odbc.Connection]):
+        """
+        Processes data files and imports the data into the database.
+
+        Parameters:
+            conn (Union[CMySQLConnection, MySQLConnection, odbc.Connection]): Database connection.
+        """
         feature_config = {
             "TaskOwner": {
                 'file_name': 'TaskOwner.csv',

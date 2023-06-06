@@ -4,18 +4,48 @@ import numpy as np
 
 
 class NeedleWunsch:
+    """
+    Needle Wunch Algorithm for local alignment.
 
+    Methods:
+        perform_alignment(seq1, seq2, penalty=-1, reward=1): Performs sequence alignment.
 
+    """
 
     @staticmethod
     def perform_alignment(seq1, seq2, penalty=-1, reward=1):
+        """
+        Performs sequence alignment using the Needleman-Wunsch algorithm.
+
+        Args:
+            seq1 (_type_): List of elements to align.
+            seq2 (_type_): List of elements to align.
+            penalty (int, optional): Penalty value. Defaults to -1.
+            reward (int, optional): Reward value. Defaults to 1.
+
+        Returns:
+            tuple: A tuple containing two aligned sequences.
+
+        """
 
         def get_score(n1, n2, penalty=-1, reward=1):
+            """
+            Calculates the score between two elements.
+
+            Args:
+                n1 (_type_): Element to compare.
+                n2 (_type_): Element to compare.
+                penalty (int, optional): Penalty score. Defaults to -1.
+                reward (int, optional): Reward score. Defaults to 1.
+
+            Returns:
+                _type_: The calculated score.
+
+            """
             if n1 == n2:
                 return reward
             else:
                 return penalty
-
 
         # initialize score matrix
         score_matrix = np.ndarray((len(seq1) + 1, len(seq2) + 1))
@@ -26,7 +56,7 @@ class NeedleWunsch:
         for j in range(len(seq2) + 1):
             score_matrix[0, j] = penalty * j
 
-        # define each cell in the matrix by as the max score possible in that stage
+        # define each cell in the matrix as the max score possible in that stage
         for i in range(1, len(seq1) + 1):
             for j in range(1, len(seq2) + 1):
                 match = score_matrix[i - 1, j - 1] + get_score(seq1[i - 1], seq2[j - 1], penalty, reward)

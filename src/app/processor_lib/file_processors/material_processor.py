@@ -6,6 +6,23 @@ from app.processor_lib.file_processors.category_processor import CategoryProcess
 
 
 class MaterialProcessor(IEntityProcessor):
+    """
+    A class that processes material types.
+
+    Attributes:
+        __db_schema__ (str): The database schema name.
+        __db_table_name__ (str): The database table name.
+        __separator__ (str): The separator used in the file.
+        __db_handler__ (db.db_handler): The database handler object.
+        __categoryProcessor__ (__categoryProcessor__.CategoryProcessor): The category code processor object.
+        
+    Methods:
+        __init__(db_handler): Initializes the MaterialProcessor instance.
+        get_from_db(conn, get_ref_value): Retrieves material from the database.
+        get_from_file(file_path): Retrieves materials from a file.
+        process_file_import(source_df, conn, catch_failed): Processes the file import for materials.
+
+    """
     __db_schema__ = 'etl'
     __db_table_name__ = 'Material'
     __separator__ = ';'
@@ -23,6 +40,17 @@ class MaterialProcessor(IEntityProcessor):
     }
 
     def __init__(self, db_handler: db.db_handler):
+        """
+        Initializes the MaterialProcessor instance.
+
+        Args:
+            db_handler (db.db_handler): Database handler object.
+
+        Raises:
+            IOError: Raised if the DB handler is not initialized.
+
+        """
+        
         if db_handler is None:
             raise IOError("DB handler not initialized")
         self.__db_handler__ = db_handler
@@ -30,6 +58,20 @@ class MaterialProcessor(IEntityProcessor):
         print('Material Processor Initialized')
 
     def get_from_db(self, conn, get_ref_value=False):
+        """
+        Retrieves data from the database.
+
+        Args:
+            conn: Database connection object.
+            get_ref_value (bool, optional): Flag to get reference values. Defaults to False.
+
+        Returns:
+            pandas.DataFrame: Retrieved entity data.
+
+        Raises:
+            RuntimeError: Raised if unable to retrieve data from the database.
+
+        """
         print("Reading Material from Db")
         (res, data) = self.__db_handler__.read_from_db(conn=conn, schema=self.__db_schema__,
                                                        table_name=self.__db_table_name__)
@@ -51,6 +93,20 @@ class MaterialProcessor(IEntityProcessor):
         return data
 
     def get_from_file(self, file_path):
+        """
+        Retrieves data from a file.
+
+        Args:
+            file_path (str): Path to the file.
+
+        Returns:
+            pandas.DataFrame: Retrieved entity data.
+
+        Raises:
+            FileNotFoundError: Raised if the file is not found.
+            RuntimeError: Raised if unable to retrieve data from the file.
+
+        """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File not found")
         print("Reading Material from file")
@@ -64,6 +120,19 @@ class MaterialProcessor(IEntityProcessor):
         return data
 
     def process_file_import(self, source_df, conn, catch_failed=True):
+        """
+        Processes the file import for source data.
+
+        Args:
+            source_df (pandas.DataFrame): Source data to import.
+            conn: Database connection object.
+            catch_failed (bool, optional): Flag to catch failed records. Defaults to True.
+
+        Returns:
+            tuple: A tuple containing the number of affected records, a list of errors, and failed records.
+
+        """
+        
         affected = 0
         errors = []
         failed = None

@@ -6,6 +6,17 @@ from app.Enum.EnumFileType import EnumFileType
 
 
 class RawDataProcessor:
+    """
+    Processor for raw data files.
+
+    Methods:
+        get_from_file(file_path): Reads raw data from a file.
+        process(raw_data_df, file_type, root_dir): Processes the raw data based on the file type.
+        __process_layout_type__(raw_data, root_dir): Processes layout type data.
+        __process_engine_program__(raw_data, root_dir): Processes engine program data.
+        __process_sap_raw__(raw_data, root_dir): Processes SAP raw extract data.
+        __process_categories__(raw_data, root_dir): Processes categories data.
+    """
     columnNameMap = {
         "CauseCode": "CauseCode",
         "CauseText": "CauseText"
@@ -51,6 +62,19 @@ class RawDataProcessor:
 
     @staticmethod
     def get_from_file(file_path):
+        """
+        Reads raw data from a file.
+
+        Args:
+            file_path (str): Path to the raw data file.
+
+        Returns:
+            pandas.DataFrame: The raw data as a DataFrame.
+
+        Raises:
+            FileNotFoundError: If the file is not found.
+            RuntimeError: If there is an error while reading the file.
+        """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File not found")
         print("Reading raw data from file")
@@ -69,6 +93,17 @@ class RawDataProcessor:
         return data
 
     def process(self, raw_data_df, file_type, root_dir):
+        """
+        Processes the raw data based on the file type.
+
+        Args:
+            raw_data_df (pandas.DataFrame): The raw data as a DataFrame.
+            file_type (EnumFileType): The type of the raw data file.
+            root_dir (str): The root directory for storing the processed data.
+
+        Returns:
+            None
+        """
         root_dir = os.path.join(root_dir, "processed")
         if not os.path.exists(root_dir):
             os.mkdir(root_dir)
@@ -90,6 +125,16 @@ class RawDataProcessor:
                 print('None')
 
     def __process_layout_type__(self, raw_data: pd.DataFrame, root_dir: str) -> None:
+        """
+        Processes layout type data.
+
+        Args:
+            raw_data (pandas.DataFrame): The raw data as a DataFrame.
+            root_dir (str): The root directory for storing the processed data.
+
+        Returns:
+            None
+        """
         raw_data_df = raw_data.rename(columns=self.__layoutType_ColumnMap__)
 
         if {'DamageCode', 'DamageText'}.issubset(raw_data_df.columns):
@@ -122,6 +167,16 @@ class RawDataProcessor:
                 layoutType_df.to_csv(os.path.join(root_dir, "LayoutType.csv"), index=False, sep=';')
 
     def __process_engine_program__(self, raw_data: pd.DataFrame, root_dir: str) -> None:
+        """
+        Processes engine program data.
+
+        Args:
+            raw_data (pandas.DataFrame): The raw data as a DataFrame.
+            root_dir (str): The root directory for storing the processed data.
+
+        Returns:
+            None
+        """
         raw_data_df = raw_data.rename(columns=self.__engineProgram_ColumnMap__)
 
         if {'Coding', 'CodingText'}.issubset(raw_data_df.columns):
@@ -144,6 +199,16 @@ class RawDataProcessor:
                 engineProgram_df.to_csv(os.path.join(root_dir, "EngineProgram.csv"), index=False, sep=';')
 
     def __process_sap_raw__(self, raw_data: pd.DataFrame, root_dir: str) -> None:
+        """
+        Processes SAP raw extract data.
+
+        Args:
+            raw_data (pandas.DataFrame): The raw data as a DataFrame.
+            root_dir (str): The root directory for storing the processed data.
+
+        Returns:
+            None
+        """
         raw_data_df = raw_data.rename(columns=self.__sap_raw_extract_ColumnMap__)
         raw_data_df.fillna('', inplace=True)
 
@@ -223,6 +288,16 @@ class RawDataProcessor:
                 layout_task_df.to_csv(os.path.join(root_dir, "LayoutTask.csv"), index=False, sep=';')
 
     def __process_categories__(self, raw_data: pd.DataFrame, root_dir: str) -> None:
+        """
+        Processes categories data.
+
+        Args:
+            raw_data (pandas.DataFrame): The raw data as a DataFrame.
+            root_dir (str): The root directory for storing the processed data.
+
+        Returns:
+            None
+        """
         raw_data_df = raw_data.rename(columns=self.__categories_ColumnMap__)
 
         if {'Category'}.issubset(raw_data_df.columns):

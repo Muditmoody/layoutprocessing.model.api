@@ -2,9 +2,27 @@ import numpy as np
 from app.Enum import Score, Trace
 
 class SmithWaterman:
+    """
+    Smith Waterman algorithm for Global alignment.
 
+    Methods:
+        perform_alignment(seq1, seq2): Performs alignment for given sequences.
+
+    """
+    
     @staticmethod
     def perform_alignment(seq1, seq2):
+        """
+        Performs sequence alignment using the Smith-Waterman algorithm.
+
+        Args:
+            seq1 (list[str]): Sequence to compare.
+            seq2 (list[str]): Sequence to compare.
+
+        Returns:
+            tuple: A tuple containing the aligned sequences and the match score.
+
+        """
         # Generating the empty matrices for storing scores and tracing
         row = len(seq1) + 1
         col = len(seq2) + 1

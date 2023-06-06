@@ -18,8 +18,17 @@ app.include_router(api_router, prefix="/api")
 
 @app.get("/")
 async def root():
+    """
+    Root endpoint.
+
+    Returns:
+        dict: Response containing a message.
+    """
     return {"message": "Hey"}
 
 
 if __name__ == '__main__':
+    """
+    Main entry point of the application.
+    """
     uvicorn.run(app, host="localhost", port="6060")

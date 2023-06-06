@@ -3,24 +3,53 @@ import app.utils.db_handler as db
 import os
 from app.processor_lib.file_processors.IEntityProcessor import IEntityProcessor
 
-
 class CategoryProcessor(IEntityProcessor):
-    __db_schema__ = 'etl'
-    __db_table_name__ = 'Category'
-    __separator__ = ';'
-    __db_handler__ = None
+    """
+    A class for processing category data.
 
-    columnNameMap = {
-        "Category": "CategoryName",
-    }
+    Inherits:
+        IEntityProcessor: An interface for entity processors.
+
+    Attributes:
+        __db_schema__ (str): The database schema name.
+        __db_table_name__ (str): The database table name.
+        __separator__ (str): The separator used in the file.
+        __db_handler__ (db.db_handler): The database handler.
+        columnNameMap (dict): A mapping of column names.
+
+    """
 
     def __init__(self, db_handler: db.db_handler):
+        """
+        Initializes a CategoryProcessor instance.
+
+        Args:
+            db_handler (db.db_handler): The database handler.
+
+        Raises:
+            IOError: If the DB handler is not initialized.
+
+        """
         if db_handler is None:
             raise IOError("DB handler not initialized")
         self.__db_handler__ = db_handler
         print('Category Processor Initialized')
 
     def get_from_db(self, conn, get_ref_value=False):
+        """
+        Retrieves categories from the database.
+
+        Args:
+            conn: The database connection object.
+            get_ref_value (bool): Whether to get reference values or not.
+
+        Returns:
+            pd.DataFrame: The retrieved category data.
+
+        Raises:
+            RuntimeError: If unable to retrieve category from the database.
+
+        """
         print("Reading categories from Db")
         (res, data) = self.__db_handler__.read_from_db(conn=conn, schema=self.__db_schema__,
                                                        table_name=self.__db_table_name__)
@@ -31,6 +60,20 @@ class CategoryProcessor(IEntityProcessor):
         return data
 
     def get_from_file(self, file_path):
+        """
+        Retrieves category data from a file.
+
+        Args:
+            file_path (str): The path to the file.
+
+        Returns:
+            pd.DataFrame: The retrieved category data.
+
+        Raises:
+            FileNotFoundError: If the file is not found.
+            RuntimeError: If unable to retrieve category from the file.
+
+        """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File not found")
         print("Reading category from file")
@@ -44,6 +87,18 @@ class CategoryProcessor(IEntityProcessor):
         return data
 
     def process_file_import(self, source_df, conn, catch_failed=True):
+        """
+        Processes the import of category data from a file.
+
+        Args:
+            source_df (pd.DataFrame): The source data to import.
+            conn: The database connection object.
+            catch_failed (bool): Whether to catch failed records or not.
+
+        Returns:
+            tuple: A tuple containing the number of affected records and any failed records.
+
+        """
         affected = 0
         errors = []
         failed = None
@@ -65,4 +120,3 @@ class CategoryProcessor(IEntityProcessor):
                                                                        catch_failed=catch_failed)
 
         return affected, failed
-

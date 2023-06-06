@@ -5,6 +5,24 @@ from app.processor_lib.file_processors.IEntityProcessor import IEntityProcessor
 
 
 class SupplierVendorProcessor(IEntityProcessor):
+    """
+    Supplier Vendor Processor class for handling supplier data.
+
+    Attributes:
+        __db_schema__ (str): Database schema name.
+        __db_table_name__ (str): Database table name.
+        __separator__ (str): Separator used in the file.
+        __db_handler__ (db.db_handler): Database handler object.
+        columnNameMap (dict): Mapping of column names.
+
+    Methods:
+        __init__(db_handler): Initializes the SupplierVendorProcessor instance.
+        get_from_db(conn, get_ref_value): Retrieves suppliervendor from the database.
+        get_from_file(file_path): Retrieves suppliervendors from a file.
+        process_file_import(source_df, conn, catch_failed): Processes the file import for suppliervendors.
+
+    """
+
     __db_schema__ = 'etl'
     __db_table_name__ = 'SupplierVendor'
     __separator__ = ';'
@@ -19,12 +37,37 @@ class SupplierVendorProcessor(IEntityProcessor):
     }
 
     def __init__(self, db_handler: db.db_handler):
+        """
+        Initializes the SupplierVendorProcessor instance.
+
+        Args:
+            db_handler (db.db_handler): Database handler object.
+
+        Raises:
+            IOError: Raised if the DB handler is not initialized.
+
+        """
+        
         if db_handler is None:
             raise IOError("DB handler not initialized")
         self.__db_handler__ = db_handler
         print('SupplierVendor Processor Initialized')
 
     def get_from_db(self, conn, get_ref_value=False):
+        """
+        Retrieves data from the database.
+
+        Args:
+            conn: Database connection object.
+            get_ref_value (bool, optional): Flag to get reference values. Defaults to False.
+
+        Returns:
+            pandas.DataFrame: Retrieved entity data.
+
+        Raises:
+            RuntimeError: Raised if unable to retrieve data from the database.
+
+        """
         print("Reading SupplierVendor from DB")
         (res, data) = self.__db_handler__.read_from_db(conn=conn, schema=self.__db_schema__,
                                                        table_name=self.__db_table_name__)
@@ -36,6 +79,20 @@ class SupplierVendorProcessor(IEntityProcessor):
         return data
 
     def get_from_file(self, file_path):
+        """
+        Retrieves data from a file.
+
+        Args:
+            file_path (str): Path to the file.
+
+        Returns:
+            pandas.DataFrame: Retrieved entity data.
+
+        Raises:
+            FileNotFoundError: Raised if the file is not found.
+            RuntimeError: Raised if unable to retrieve data from the file.
+
+        """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File not found")
 
@@ -52,6 +109,19 @@ class SupplierVendorProcessor(IEntityProcessor):
         return data
 
     def process_file_import(self, source_df, conn, catch_failed=True):
+        """
+        Processes the file import for source data.
+
+        Args:
+            source_df (pandas.DataFrame): Source data to import.
+            conn: Database connection object.
+            catch_failed (bool, optional): Flag to catch failed records. Defaults to True.
+
+        Returns:
+            tuple: A tuple containing the number of affected records, a list of errors, and failed records.
+
+        """
+        
         affected = 0
         errors = []
         failed = None

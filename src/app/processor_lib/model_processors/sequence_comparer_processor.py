@@ -8,39 +8,105 @@ from datetime import datetime
 
 
 def extract_taskCode(row):
+    """
+    Extracts the task code name from the row.
+
+    Args:
+        row (Series): The input row.
+
+    Returns:
+        str: The task code name.
+    """
     return row['taskCodeName']
 
 
 def extract_groupCode(row):
+    """
+    Extracts the group code from the row.
+
+    Args:
+        row (Series): The input row.
+
+    Returns:
+        str: The group code.
+    """
     return row['groupCode']['codeGroupName']
 
 
 def extract_itemNumber(row):
+    """
+    Extracts the item number from the row.
+
+    Args:
+        row (Series): The input row.
+
+    Returns:
+        str: The item number.
+    """
     return row['itemNumber']
 
 
 def calculate_date_diff(row):
+    """
+    Calculates the date difference in days between 'CreatedOn' and 'CompletedOn' columns in the row.
+
+    Args:
+        row (Series): The input row.
+
+    Returns:
+        int: The date difference in days.
+    """
     date_format = "%Y-%m-%dT%H:%M:%S"
     date_start = datetime.strptime(row['CreatedOn'], date_format)
     date_end = datetime.strptime(row['CompletedOn'], date_format)
     return (date_end-date_start).days + 1
 
 def hybrid_alignment(seq_1, seq_2):
+    """
+    Performs hybrid sequence alignment using Needleman-Wunsch and Smith-Waterman algorithms.
+
+    Args:
+        seq_1 (list): The first sequence.
+        seq_2 (list): The second sequence.
+
+    Returns:
+        tuple: A tuple containing the aligned sequences and the alignment score.
+    """
     global_alignment_1_2 = nw.NeedleWunsch.perform_alignment(seq_1, seq_2)
     local_alignment_1_2_x = sw.SmithWaterman.perform_alignment(global_alignment_1_2[0], global_alignment_1_2[1])
     return local_alignment_1_2_x
 
 
 class SequenceComparerProcessor:
+    """
+    Class for sequence comparison tasks.
+
+    Methods:
+        - __init__(): Initializes the SequenceComparerProcessor.
+        - evaluate(notif_ref): Evaluates the sequence similarity based on the notification reference.
+        - save_results(result, runDate): Saves the sequence similarity results.
+    """
     __taskCodes__ = None
     __groupCodes__ = None
 
     def __init__(self):
+        """
+        Initializes the SequenceComparerProcessor.
+        """
         self.__taskCodes__ = self.__taskCodes__ if self.__taskCodes__ is not None else data_proc.DataExtractProcessor.get_task_codes()
         self.__groupCodes__ = self.__groupCodes__ if self.__groupCodes__ is not None else data_proc.DataExtractProcessor.get_group_codes()
-        print("")
+        pass
 
     def evaluate(self, notif_ref):
+        """
+        Evaluates the sequence similarity based on the notification reference.
+
+        Args:
+            notif_ref (int): The notification reference.
+
+        Returns:
+            DataFrame, DataFrame: The evaluated DataFrame and summary DataFrame.
+        """
         response = requests.get(
             f'http://localhost:6001/api/etl/LayoutTask/GetLayoutTypeByNotification?notificationRef={notif_ref}',
             verify=False)
@@ -105,6 +171,16 @@ class SequenceComparerProcessor:
 
     @staticmethod
     def save_results(result, runDate):
+        """
+        Saves the sequence similarity results.
+
+        Args:
+            result (DataFrame): The sequence similarity results DataFrame.
+            runDate: The run date.
+
+        Returns:
+            None
+        """
         response = requests.post(url= f'http://localhost:6001/api/model/SequenceSimilarity/AddSequenceSimilarity?runDate={runDate}',
                                  json= result, verify=False)
 

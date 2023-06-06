@@ -6,6 +6,12 @@ from app.utils import db_handler as db
 
 
 def process_raw_file():
+    """
+    Process the raw file.
+
+    Returns:
+        None
+    """
     raw_file_loader = rfl.RawFileLoader()
 
     base_path = "..\\data"
@@ -16,6 +22,12 @@ def process_raw_file():
 
 
 def process_file_import():
+    """
+    Process file import.
+
+    Returns:
+        None
+    """
     base_path = "..\\data"
     process_dir = "..\\data\\processed"
     failed_dir = "..\\data\\failed"
@@ -30,6 +42,16 @@ def process_file_import():
 
 
 def process_files(raw_loader=False, file_import=False):
+    """
+    Process files based on the specified options.
+
+    Args:
+        raw_loader (bool): Flag indicating whether to perform raw file loading.
+        file_import (bool): Flag indicating whether to perform file import.
+
+    Returns:
+        None
+    """
     argumentList = sys.argv[1:]
     options = "ri:"
 
@@ -37,22 +59,6 @@ def process_files(raw_loader=False, file_import=False):
     raw_loader_feature = raw_loader
     file_import_feature = file_import
 
-    '''
-    try:
-        # Parsing argument
-        arguments, values = getopt.getopt(argumentList, options, long_options)
-
-        # checking each argument
-        for currentArgument, currentValue in arguments:
-
-            if currentArgument in ("-r", "--raw_loader"):
-                raw_loader_feature = True
-
-            elif currentArgument in ("-i", "--file_import"):
-                file_import_feature = True
-    except Exception as ex:
-        print(ex)
-    '''
     if raw_loader_feature:
         process_raw_file()
     if file_import_feature:

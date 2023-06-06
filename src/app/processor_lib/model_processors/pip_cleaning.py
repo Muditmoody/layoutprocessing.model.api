@@ -103,10 +103,27 @@ def date2String(date, format):
         return None
 
 class Cleaning:
+    """
+    Class for data cleaning operations.
+    """
+    
     def __init__(self):
+        """
+        Initialize the Cleaning object.
+        """
+
         pass
 
     def __turnbackCheck__(self, text):
+        """
+        Checks if the given text contains keywords related to turnback or return.
+
+        Args:
+            text (str): Text to check.
+
+        Returns:
+            int: Flag indicating if the text contains turnback or return keywords (1 if true, 0 if false).
+        """
         flag = 0
         for keyword in ["turnback", "return"]:
             if keyword in str(text).lower():
@@ -116,12 +133,30 @@ class Cleaning:
         # Approved for life
 
     def __lifeCheck__(self, text):
+        """
+        Checks if the given text contains the keyword "life".
+
+        Args:
+            text (str): Text to check.
+
+        Returns:
+            int: Flag indicating if the text contains the keyword "life" (1 if true, 0 if false).
+        """
         flag = 0
         if "life" in str(text).lower():
             flag = 1
         return flag
 
     def clean(self, dfs):
+        """
+        Clean the dataframes.
+
+        Args:
+            dfs (dict): Dictionary of input dataframes.
+
+        Returns:
+            pd.DataFrame: Cleaned dataframe.
+        """
         # ADDING GENERALCODE
         groupMap = dfs["GeneralCode_df"]
 
@@ -158,9 +193,6 @@ class Cleaning:
                         left_on=["DamageCodeId"],
                         right_on=["DamageCodeId"])
         task = pd.merge(task, dfs["Category_df"], how="left", left_on=["CategoryId"], right_on=["CategoryId"])
-        # task = pd.merge(task,dfs["LayoutType_df"][["Notification","Sort_Number","DamageCode","CauseCode"]],how="left",left_on=["Notification","Item"],right_on=["Notification","Sort_Number"]).drop(columns = ['Sort_Number'])
-        # task = pd.merge(task,dfs["Material_df"][["Material","Description"]],how="left",left_on=["Material"],right_on=["Material"])
-        # task = pd.merge(task,dfs["TaskCode_df"][["TaskCode","GroupCode","TaskCodeText", "GeneralCode"]],how="left",left_on=["TaskCode","GroupCode"],right_on=["TaskCode","GroupCode"])
         task = pd.merge(task, dfs["TaskCode_df"][["TaskCodeId", "TaskCode", "TaskCodeText", "GeneralCode"]], how="left",
                         left_on=["TaskCodeId"], right_on=["TaskCodeId"])
 
@@ -228,6 +260,15 @@ class Cleaning:
 
     @staticmethod
     def process_cleaning(save_result=True):
+        """
+        Process the data cleaning.
+
+        Args:
+            save_result (bool): Flag indicating whether to save the cleaned data.
+
+        Returns:
+            pd.DataFrame: Cleaned dataframe.
+        """
         use_api = True
         filePath = "../data/processed/"
         save_path = "../../data/"

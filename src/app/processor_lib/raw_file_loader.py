@@ -8,13 +8,41 @@ from app.processor_lib.file_processors import raw_processor as r_proc
 
 
 class RawFileLoader:
+    """
+    Class for loading and processing raw files.
+
+    Attributes:
+        __base_path__ (str): Base path for file loading.
+        __file_name__ (str): Name of the file to be processed.
+
+    Methods:
+        __init__(): Initializes the RawFileLoader object.
+        process(base_path: str, file_name: str): Processes the raw file based on the specified base path and file name.
+    """
+
     __base_path__ = ".."
     __file_name__ = 'RawData_McGillMMA_20221014.xlsm'
 
     def __init__(self):
+        """
+        Initializes the RawFileLoader object.
+
+        Returns:
+            None
+        """
         print("File loader initalized")
 
     def process(self, base_path: str, file_name: str):
+        """
+        Processes the raw file based on the specified base path and file name.
+
+        Args:
+            base_path (str): Base path for file loading.
+            file_name (str): Name of the file to be processed.
+
+        Returns:
+            None
+        """
         self.__base_path__ = ".." if base_path is None or base_path == "" else base_path
         self.__file_name__ = 'RawData_McGillMMA_20221014.xlsm' if file_name is None or file_name == "" else file_name
 

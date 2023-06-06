@@ -10,6 +10,29 @@ from app.utils.date_util import date_util
 
 
 class LayoutTaskProcessor(IEntityProcessor):
+    """
+    A class that processes layout tasks.
+
+    Attributes:
+        __db_schema__ (str): The database schema name.
+        __db_table_name__ (str): The database table name.
+        __separator__ (str): The separator used in the file.
+        __db_handler__ (db.db_handler): The database handler object.
+        __layoutTypeProcessor__ (layout_type_processor.LayoutTypeProcessor): The layout type processor object.
+        __materialProcessor__ (material_processor.MaterialProcessor): The material processor object.
+        __supplierProcessor__ (suppliervendor_processor.SupplierVendorProcessor): The supplier vendor processor object.
+        __taskCodeProcessor__ (task_code_processor.TaskCodeProcessor): The task code processor object.
+        __taskOwnerProcessor__ (task_owner_processor.TaskOwnerProcessor): The task owner processor object.
+        __taskStatusProcessor__ (task_status_processor.TaskStatusProcessor): The task status processor object.
+
+    Methods:
+        __init__(db_handler): Initializes the LayoutTaskProcessor instance.
+        get_from_db(conn, get_ref_value): Retrieves layout task from the database.
+        get_from_file(file_path): Retrieves layout tasks from a file.
+        process_file_import(source_df, conn, catch_failed): Processes the file import for layout task.
+
+    """
+    
     __db_schema__ = 'etl'
     __db_table_name__ = 'LayoutProcessingTasks'
     __separator__ = ';'
@@ -56,6 +79,17 @@ class LayoutTaskProcessor(IEntityProcessor):
     }
 
     def __init__(self, db_handler: db.db_handler):
+        """
+        Initializes the LayoutTaskProcessor instance.
+
+        Args:
+            db_handler (db.db_handler): Database handler object.
+
+        Raises:
+            IOError: Raised if the DB handler is not initialized.
+
+        """
+        
 
         if db_handler is None:
             raise IOError("DB handler not initialized")
@@ -74,6 +108,20 @@ class LayoutTaskProcessor(IEntityProcessor):
         print('Layout Task Processor Initialized')
 
     def get_from_db(self, conn, get_ref_value=False):
+        """
+        Retrieves data from the database.
+
+        Args:
+            conn: Database connection object.
+            get_ref_value (bool, optional): Flag to get reference values. Defaults to False.
+
+        Returns:
+            pandas.DataFrame: Retrieved entity data.
+
+        Raises:
+            RuntimeError: Raised if unable to retrieve data from the database.
+
+        """
         print("Reading LayoutType Task from Db")
         (res, data) = self.__db_handler__.read_from_db(conn=conn, schema=self.__db_schema__,
                                                        table_name=self.__db_table_name__)
@@ -85,6 +133,20 @@ class LayoutTaskProcessor(IEntityProcessor):
         return data
 
     def get_from_file(self, file_path):
+        """
+        Retrieves data from a file.
+
+        Args:
+            file_path (str): Path to the file.
+
+        Returns:
+            pandas.DataFrame: Retrieved entity data.
+
+        Raises:
+            FileNotFoundError: Raised if the file is not found.
+            RuntimeError: Raised if unable to retrieve data from the file.
+
+        """
         if not os.path.exists(file_path):
             raise FileNotFoundError("File not found")
         print("Reading Layout Task from file")
@@ -98,6 +160,19 @@ class LayoutTaskProcessor(IEntityProcessor):
         return data
 
     def process_file_import(self, source_df, conn, catch_failed=True):
+        """
+        Processes the file import for source data.
+
+        Args:
+            source_df (pandas.DataFrame): Source data to import.
+            conn: Database connection object.
+            catch_failed (bool, optional): Flag to catch failed records. Defaults to True.
+
+        Returns:
+            tuple: A tuple containing the number of affected records, a list of errors, and failed records.
+
+        """
+        
         affected = 0
         errors = []
         failed = None

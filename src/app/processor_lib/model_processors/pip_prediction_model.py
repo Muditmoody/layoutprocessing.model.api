@@ -10,11 +10,28 @@ SEED = 53
 
 
 class Prediction:
+    """
+    Class for making predictions using trained models.
+    """
+
     def __init__(self):
+        """
+        Initialize the Prediction object.
+        """
+
         pass
 
     @staticmethod
     def process_prediction(save_result=True):
+        """
+        Process the prediction using trained models.
+
+        Args:
+            save_result (bool): Flag indicating whether to save the prediction result.
+
+        Returns:
+            pandas.DataFrame: The prediction result.
+        """
         use_api = True
         filePath = "../data/processed/"
         save_path = "../../data/"

@@ -16,10 +16,28 @@ SEED = 53
 
 
 def quarter(month):
+    """
+    Returns the quarter corresponding to the given month.
+
+    Args:
+        month (int): The input month.
+
+    Returns:
+        int: The quarter corresponding to the input month.
+    """
     return (month - 1) // 3 + 1
 
 
 def intNA(x):
+    """
+    Converts the input to an integer if possible, else returns 'NA'.
+
+    Args:
+        x: The input value.
+
+    Returns:
+        int or str: The converted integer or 'NA'.
+    """
     if str(type(x)) == "<class 'str'>":
         return x
     elif math.isnan(x):
@@ -30,6 +48,16 @@ def intNA(x):
 
 # Process engine names
 def generalEngine(x):
+    """
+    Returns the general engine name based on the input.
+
+    Args:
+        x (str): The input engine name.
+
+    Returns:
+        str: The general engine name.
+    """
+
     if x.startswith("pw") or x.startswith("pt"):
         return x[:3]
     else:
@@ -38,6 +66,15 @@ def generalEngine(x):
 
 # Bin major engine group
 def binEngine(x):
+    """
+    Bins the engine into major groups.
+
+    Args:
+        x (str): The input engine name.
+
+    Returns:
+        str: The binned engine name.
+    """
     if x in ["pt6", "pw1", "pw3"]:
         return x
     else:
@@ -46,6 +83,15 @@ def binEngine(x):
 
 # Bin major cause code
 def binCause_Code(x):
+    """
+    Bins the cause code into major groups.
+
+    Args:
+        x (str): The input cause code.
+
+    Returns:
+        str: The binned cause code.
+    """
     if x in ["l055", "l070", "l020", "nan"]:
         return x
     else:
@@ -54,6 +100,16 @@ def binCause_Code(x):
 
 # Bin major damage code
 def binDamage_Code(x):
+    """
+    Bins the damage code into major groups.
+
+    Args:
+        x (str): The input damage code.
+
+    Returns:
+        str: The binned damage code.
+    """
+
     if x in ["10", "20", "30"]:
         return x
     else:
@@ -62,6 +118,15 @@ def binDamage_Code(x):
 
 # Bin major supplier
 def binSupplier_Vendor(x):
+    """
+    Bins the supplier/vendor into major groups.
+
+    Args:
+        x (str): The input supplier/vendor.
+
+    Returns:
+        str: The binned supplier/vendor.
+    """
     if x in ["7965", "1375", "9483", "2849", "1510"]:
         return x
     else:
@@ -83,6 +148,17 @@ def adjust_feature_names(f):
 
 
 class Preparation:
+    """
+    Class for data preparation tasks.
+
+    Methods:
+        - ItemCreatedOn_df(df): Returns a DataFrame with the minimum created_on date for each item.
+        - feature_manipulation(task): Performs feature manipulation on the task DataFrame.
+        - get_target(task_df): Adds a target column 'TaskDuration' to the task DataFrame.
+        - drop_outliers(taskAvailable): Drops outliers from the task DataFrame.
+        - get_x_y(task): Returns the feature matrix X and target vector y from the task DataFrame.
+        - get_x(task): Returns the feature matrix X from the task DataFrame.
+    """
     selected_features = ['Item', 'TaskOwnerExperience', 'DaysFromItemStart', 'DaysPerTask',
                          'Task', 'SupplierVendor_2849', 'Seasonality', 'DamageCode_30',
                          'CauseCode_l055', 'TaskCreatedMonth_7', 'TaskCreatedMonth_2',
@@ -105,12 +181,31 @@ class Preparation:
 
     @staticmethod
     def ItemCreatedOn_df(df):
+        """
+        Returns a DataFrame with the minimum created_on date for each item.
+
+        Args:
+            df (DataFrame): The input DataFrame.
+
+        Returns:
+            DataFrame: A DataFrame with columns ['Notification', 'Item', 'Item_Created_On'].
+        """
+
         return df[['Notification', 'Item', 'Created_On']].groupby(['Notification', 'Item']). \
             agg({'Created_On': 'min'}).reset_index(). \
             rename(columns={"Created_On": "Item_Created_On"})
 
     @staticmethod
     def feature_manipulation(task):
+        """
+        Performs feature manipulation on the task DataFrame.
+
+        Args:
+            task (DataFrame): The input task DataFrame.
+
+        Returns:
+            DataFrame: The modified task DataFrame after feature manipulation.
+        """
         for i in ["Created_On", "Completed_On", "Planned_Start", "Planned_Finish"]:
             task[i] = pd.to_datetime(task[i], format="%Y/%m/%d", errors="coerce")
         task["TaskCreatedYear"] = task["Created_On"].map(lambda x: x.year)
@@ -172,6 +267,15 @@ class Preparation:
 
     @staticmethod
     def get_target(task_df):
+        """
+        Adds a target column 'TaskDuration' to the task DataFrame.
+
+        Args:
+            task_df (DataFrame): The input task DataFrame.
+
+        Returns:
+            DataFrame: The task DataFrame with the 'TaskDuration' column added.
+        """
         # add target column for training dataset
         task_df['TaskDuration'] = task_df["Completed_On"] - task_df["Task_Created_On"]
         task_df['TaskDuration'] = task_df['TaskDuration'].dt.days
@@ -180,6 +284,15 @@ class Preparation:
 
     @staticmethod
     def drop_outliers(taskAvailable):
+        """
+        Drops outliers from the task DataFrame.
+
+        Args:
+            taskAvailable (DataFrame): The input task DataFrame.
+
+        Returns:
+            DataFrame: The task DataFrame with outliers removed.
+        """
         # drop planning tasks
         # taskAvailable = taskAvailable[~taskAvailable['TaskCode'].isin(["tkat", "lpa", "vlml", "vlps", "psub"])]
         taskAvailable = taskAvailable[taskAvailable['IsPlanning'] == False]
@@ -197,6 +310,15 @@ class Preparation:
 
     @staticmethod
     def get_x_y(task):
+        """
+        Returns the feature matrix X and target vector y from the task DataFrame.
+
+        Args:
+            task (DataFrame): The input task DataFrame.
+
+        Returns:
+            DataFrame, Series: The feature matrix X and target vector y.
+        """
         unavailable = ["Completed_On",
                        "Planned_Start",
                        "Planned_Finish",
@@ -242,6 +364,16 @@ class Preparation:
 
     @staticmethod
     def get_x(task):
+        """
+        Returns the feature matrix X from the task DataFrame.
+
+        Args:
+            task (DataFrame): The input task DataFrame.
+
+        Returns:
+            DataFrame: The feature matrix X.
+        """
+
         task = task[task['IsTaskCompleted'] == False]
 
         unavailable = ["Completed_On",
